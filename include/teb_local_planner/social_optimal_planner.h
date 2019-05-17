@@ -89,8 +89,8 @@ public:
   /**
    * @brief Destruct the optimal planner.
    */
-  virtual ~TebOptimalPlanner();
-  
+  virtual ~SocialTebOptimalPlanner() {};
+
   /**
     * @brief Initializes the optimal planner
     * @param cfg Const reference to the TebConfig class for internal parameters
@@ -100,7 +100,7 @@ public:
     * @param via_points Container storing via-points (optional)
     */
   void initialize(const TebConfig& cfg, ObstContainer* obstacles = NULL, RobotFootprintModelPtr robot_model = boost::make_shared<PointRobotFootprint>(),
-                  TebVisualizationPtr visual = TebVisualizationPtr(), const ViaPointContainer* via_points = NULL, HumanContainer* humans);
+                  TebVisualizationPtr visual = TebVisualizationPtr(), const ViaPointContainer* via_points = NULL, HumanContainer* humans=NULL);
 
 
 
