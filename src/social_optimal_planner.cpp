@@ -53,7 +53,9 @@ SocialTebOptimalPlanner::SocialTebOptimalPlanner() : TebOptimalPlanner(), humans
 SocialTebOptimalPlanner::SocialTebOptimalPlanner(
     const TebConfig &cfg, ObstContainer *obstacles,
     RobotFootprintModelPtr robot_model, TebVisualizationPtr visual,
-    const ViaPointContainer *via_points, HumanContainer *humans): TebOptimalPlanner(cfg, obstacles, robot_model, visual, via_points), humans_(humans) {}
+    const ViaPointContainer *via_points, HumanContainer *humans): TebOptimalPlanner(cfg, obstacles, robot_model, visual, via_points), humans_(humans) {
+
+}
 
 
 } // namespace teb_local_planner

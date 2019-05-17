@@ -200,6 +200,11 @@ public:
     double oscillation_filter_duration; //!< Filter length/duration [sec] for the detection of oscillations
   } recovery; //!< Parameters related to recovery and backup strategies
 
+  struct SocialTEB
+  {
+    bool use_social_teb;  //!< Take humans into account when optimizing the trajectory
+  } socialTeb;  //!< Parameters related to socially awareness planning (but not optimizations constraints)
+
   
   /**
   * @brief Construct the TebConfig using default values.
@@ -335,6 +340,9 @@ public:
     recovery.oscillation_omega_eps = 0.1;
     recovery.oscillation_recovery_min_duration = 10;
     recovery.oscillation_filter_duration = 10;
+
+    // Social TEB
+    socialTeb.use_social_teb = false;
 
 
   }

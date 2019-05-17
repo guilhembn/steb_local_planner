@@ -154,6 +154,9 @@ void TebConfig::loadRosParamFromNodeHandle(const ros::NodeHandle& nh)
   nh.param("oscillation_recovery_min_duration", recovery.oscillation_recovery_min_duration, recovery.oscillation_recovery_min_duration);
   nh.param("oscillation_filter_duration", recovery.oscillation_filter_duration, recovery.oscillation_filter_duration);
 
+  // SocialTEB
+  nh.param("use_social_teb", socialTeb.use_social_teb, socialTeb.use_social_teb);
+
   checkParameters();
   checkDeprecated(nh);
 }
@@ -253,6 +256,9 @@ void TebConfig::reconfigure(TebLocalPlannerReconfigureConfig& cfg)
   
   recovery.shrink_horizon_backup = cfg.shrink_horizon_backup;
   recovery.oscillation_recovery = cfg.oscillation_recovery;
+
+  // Social TEB
+  socialTeb.use_social_teb = cfg.use_social_teb;
   
   checkParameters();
 }

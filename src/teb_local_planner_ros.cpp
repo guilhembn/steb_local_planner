@@ -100,15 +100,19 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
     RobotFootprintModelPtr robot_model = getRobotFootprintFromParamServer(nh);
     
     // create the planner instance
-    if (cfg_.hcp.enable_homotopy_class_planning)
-    {
-      planner_ = PlannerInterfacePtr(new HomotopyClassPlanner(cfg_, &obstacles_, robot_model, visualization_, &via_points_));
-      ROS_INFO("Parallel planning in distinctive topologies enabled.");
-    }
-    else
-    {
-      planner_ = PlannerInterfacePtr(new TebOptimalPlanner(cfg_, &obstacles_, robot_model, visualization_, &via_points_));
-      ROS_INFO("Parallel planning in distinctive topologies disabled.");
+    if (cfg_.socialTeb.use_social_teb){
+      planner_ = PlannerInterfacePtr(new SocialTebOptimalPlanner(
+          cfg_, &obstacles_, robot_model, visualization_, &via_points_, nullptr)); // TODO(gbuisan): Add humans handling
+    }else {
+      if (cfg_.hcp.enable_homotopy_class_planning) {
+        planner_ = PlannerInterfacePtr(new HomotopyClassPlanner(
+            cfg_, &obstacles_, robot_model, visualization_, &via_points_));
+        ROS_INFO("Parallel planning in distinctive topologies enabled.");
+      } else {
+        planner_ = PlannerInterfacePtr(new TebOptimalPlanner(
+            cfg_, &obstacles_, robot_model, visualization_, &via_points_));
+        ROS_INFO("Parallel planning in distinctive topologies disabled.");
+      }
     }
     
     // init other variables

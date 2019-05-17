@@ -51,6 +51,7 @@
 // timed-elastic-band related classes
 #include <teb_local_planner/optimal_planner.h>
 #include <teb_local_planner/homotopy_class_planner.h>
+#include <teb_local_planner/social_optimal_planner.h>
 #include <teb_local_planner/visualization.h>
 #include <teb_local_planner/recovery_behaviors.h>
 
