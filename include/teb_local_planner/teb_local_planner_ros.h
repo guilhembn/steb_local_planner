@@ -80,6 +80,9 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
+// humans
+#include <teb_local_planner/humans_provider.h>
+
 
 namespace teb_local_planner
 {

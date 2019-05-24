@@ -23,6 +23,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_eigen
   tf2_geometry_msgs
   tf2_ros
+  uwds
   visualization_msgs
 )
 message(STATUS "System: ${CMAKE_SYSTEM}")
@@ -190,6 +191,7 @@ add_library(teb_local_planner
    src/teb_local_planner_ros.cpp
    src/graph_search.cpp
    src/social_optimal_planner.cpp
+   src/humans_provider.cpp
 )
 
 # Dynamic reconfigure: make sure configure headers are built before any node using them

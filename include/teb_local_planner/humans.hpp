@@ -9,6 +9,8 @@
 
 namespace teb_local_planner {
 
+//TODO add human orientation
+
 class Human : public CircularObstacle {
   /**
   * @brief Default constructor of the circular obstacle class
