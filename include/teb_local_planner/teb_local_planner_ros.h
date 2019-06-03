@@ -404,6 +404,9 @@ private:
   // flags
   bool initialized_; //!< Keeps track about the correct initialization of this class
 
+  std::shared_ptr<HumansProvider> humansProvider_;
+  HumanContainer humans_;
+
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -1,3 +1,5 @@
+#include <memory>
+
 /*********************************************************************
  *
  * Software License Agreement (BSD License)
@@ -101,8 +103,9 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
     
     // create the planner instance
     if (cfg_.socialTeb.use_social_teb){
+      humansProvider_ = std::make_shared<HumansProvider>();
       planner_ = PlannerInterfacePtr(new SocialTebOptimalPlanner(
-          cfg_, &obstacles_, robot_model, visualization_, &via_points_, nullptr)); // TODO(gbuisan): Add humans handling
+          cfg_, &obstacles_, robot_model, visualization_, &via_points_, &humans_));
     }else {
       if (cfg_.hcp.enable_homotopy_class_planning) {
         planner_ = PlannerInterfacePtr(new HomotopyClassPlanner(
@@ -320,6 +323,12 @@ bool TebLocalPlannerROS::computeVelocityCommands(geometry_msgs::Twist& cmd_vel)
   
   // also consider custom obstacles (must be called after other updates, since the container is not cleared)
   updateObstacleContainerWithCustomObstacles();
+
+  if (cfg_.socialTeb.use_social_teb) {
+    // Updates the human
+    humans_.clear();
+    humansProvider_->getLastHumans(humans_);
+  }
   
     
   // Do not allow config changes during the following optimization step

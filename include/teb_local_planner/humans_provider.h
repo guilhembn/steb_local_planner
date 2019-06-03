@@ -11,7 +11,7 @@ namespace teb_local_planner {
 
 class HumansProvider : public uwds::ReconfigurableClient {
 public:
-  HumansProvider(ros::NodeHandlePtr nh, ros::NodeHandlePtr pnh);
+  HumansProvider();
 
   bool getLastHumans(HumanContainer& humans);
   void onChanges(const string &world_name, const Header &header,
@@ -19,14 +19,12 @@ public:
   void onReconfigure(const vector<string> &input_worlds) override;
 
 protected:
-  struct sHumansLastSeen{
-    std_msgs::Time last_update;  // TODO: last_update or last_observation ? Are the ros::Time::now() and uwds given time synchronized ?
-    Human human;
-  };
 
   static const constexpr float humanRadius = 0.3;
 
-  std::unordered_map<std::string, sHumansLastSeen> humans_;
+  std::unordered_map<std::string, Human> humans_;
+
+  boost::mutex humans_mutex_;
 };
 
 }  // namespace teb_local_planner

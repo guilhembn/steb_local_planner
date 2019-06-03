@@ -24,6 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_geometry_msgs
   tf2_ros
   uwds
+  uwds_msgs
   visualization_msgs
 )
 message(STATUS "System: ${CMAKE_SYSTEM}")
