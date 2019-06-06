@@ -2,29 +2,28 @@
 #define TEB_LOCAL_PLANNER_HUMANS_PROVIDER_H
 
 #include <ros/ros.h>
-#include <uwds/reconfigurable_client.h>
 #include <teb_local_planner/humans.hpp>
 
 #include <unordered_map>
 
+#define UWDS_SERVICE_NAME "/uwds/get_scene"
+#define HUMANS_WORLD "robot/env"
+
 namespace teb_local_planner {
 
-class HumansProvider : public uwds::ReconfigurableClient {
+class HumansProvider{
 public:
-  HumansProvider();
+  HumansProvider() = default;
+  HumansProvider(ros::NodeHandle& nh);
 
   bool getLastHumans(HumanContainer& humans);
-  void onChanges(const string &world_name, const Header &header,
-                 const Invalidations &invalidations) override;
-  void onReconfigure(const vector<string> &input_worlds) override;
+
+
+
+  const float humanRadius = 0.3;
 
 protected:
-
-  static const constexpr float humanRadius = 0.3;
-
-  std::unordered_map<std::string, Human> humans_;
-
-  boost::mutex humans_mutex_;
+  ros::ServiceClient getuwdsSceneService_;
 };
 
 }  // namespace teb_local_planner

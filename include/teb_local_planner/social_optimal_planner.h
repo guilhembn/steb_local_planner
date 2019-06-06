@@ -47,6 +47,9 @@
 #include <teb_local_planner/optimal_planner.h>
 #include <teb_local_planner/humans.hpp>
 
+// Custom g2o types
+#include <teb_local_planner/g2o_types/edge_proxemics.h>
+
 namespace teb_local_planner
 {
 
@@ -102,14 +105,20 @@ public:
   void initialize(const TebConfig& cfg, ObstContainer* obstacles = NULL, RobotFootprintModelPtr robot_model = boost::make_shared<PointRobotFootprint>(),
                   TebVisualizationPtr visual = TebVisualizationPtr(), const ViaPointContainer* via_points = NULL, HumanContainer* humans=NULL);
 
+  boost::shared_ptr<g2o::SparseOptimizer> initOptimizerWithHumans();
 
+protected:
+
+  static void registerG2OTypesWithHumans();
+  bool buildGraph(double weight_multiplier=1.0) override;
+  void AddEdgesProxemics();
 
   // external objects (store weak pointers)
   HumanContainer* humans_; //!< Store humans that are relevant for planning
 
   
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW    
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 //! Abbrev. for shared instances of the TebOptimalPlanner

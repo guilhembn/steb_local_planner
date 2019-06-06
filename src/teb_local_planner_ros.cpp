@@ -103,7 +103,8 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
     
     // create the planner instance
     if (cfg_.socialTeb.use_social_teb){
-      humansProvider_ = std::make_shared<HumansProvider>();
+      ROS_INFO("Social constraints enabled.");
+      humansProvider_ = std::shared_ptr<HumansProvider>(new HumansProvider(nh));
       planner_ = PlannerInterfacePtr(new SocialTebOptimalPlanner(
           cfg_, &obstacles_, robot_model, visualization_, &via_points_, &humans_));
     }else {

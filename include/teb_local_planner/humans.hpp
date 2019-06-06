@@ -36,6 +36,8 @@ public:
       : CircularObstacle(x, y, radius) {}
 
 
+
+
 };
 
 //! Abbrev. for shared human pointers
