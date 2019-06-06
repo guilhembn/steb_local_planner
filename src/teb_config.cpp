@@ -121,6 +121,7 @@ void TebConfig::loadRosParamFromNodeHandle(const ros::NodeHandle& nh)
   nh.param("weight_viapoint", optim.weight_viapoint, optim.weight_viapoint);
   nh.param("weight_prefer_rotdir", optim.weight_prefer_rotdir, optim.weight_prefer_rotdir);
   nh.param("weight_adapt_factor", optim.weight_adapt_factor, optim.weight_adapt_factor);
+  nh.param("weight_social_proxemics", optim.weight_social_proxemics, optim.weight_social_proxemics);
   
   // Homotopy Class Planner
   nh.param("enable_homotopy_class_planning", hcp.enable_homotopy_class_planning, hcp.enable_homotopy_class_planning); 
@@ -156,6 +157,8 @@ void TebConfig::loadRosParamFromNodeHandle(const ros::NodeHandle& nh)
 
   // SocialTEB
   nh.param("use_social_teb", socialTeb.use_social_teb, socialTeb.use_social_teb);
+  nh.param("min_robot_human_distance", socialTeb.min_robot_human_distance, socialTeb.min_robot_human_distance);
+  nh.param("robot_human_distance_cutoff_factor", socialTeb.robot_human_distance_cutoff_factor, socialTeb.robot_human_distance_cutoff_factor);
 
   checkParameters();
   checkDeprecated(nh);
@@ -230,6 +233,7 @@ void TebConfig::reconfigure(TebLocalPlannerReconfigureConfig& cfg)
   optim.weight_dynamic_obstacle = cfg.weight_dynamic_obstacle;
   optim.weight_dynamic_obstacle_inflation = cfg.weight_dynamic_obstacle_inflation;
   optim.weight_viapoint = cfg.weight_viapoint;
+  optim.weight_social_proxemics = cfg.weight_social_proxemics;
   optim.weight_adapt_factor = cfg.weight_adapt_factor;
   
   // Homotopy Class Planner
@@ -259,7 +263,9 @@ void TebConfig::reconfigure(TebLocalPlannerReconfigureConfig& cfg)
 
   // Social TEB
   socialTeb.use_social_teb = cfg.use_social_teb;
-  
+  socialTeb.min_robot_human_distance = cfg.min_robot_human_distance;
+  socialTeb.robot_human_distance_cutoff_factor = cfg.robot_human_distance_cutoff_factor;
+
   checkParameters();
 }
     

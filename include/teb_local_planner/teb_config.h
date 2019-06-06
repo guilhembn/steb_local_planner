@@ -155,7 +155,8 @@ public:
     double weight_dynamic_obstacle_inflation; //!< Optimization weight for the inflation penalty of dynamic obstacles (should be small)
     double weight_viapoint; //!< Optimization weight for minimizing the distance to via-points
     double weight_prefer_rotdir; //!< Optimization weight for preferring a specific turning direction (-> currently only activated if an oscillation is detected, see 'oscillation_recovery'
-    
+    double weight_social_proxemics;
+
     double weight_adapt_factor; //!< Some special weights (currently 'weight_obstacle') are repeatedly scaled by this factor in each outer TEB iteration (weight_new = weight_old*factor); Increasing weights iteratively instead of setting a huge value a-priori leads to better numerical conditions of the underlying optimization problem.
   } optim; //!< Optimization related parameters
   
@@ -203,6 +204,8 @@ public:
   struct SocialTEB
   {
     bool use_social_teb;  //!< Take humans into account when optimizing the trajectory
+    double min_robot_human_distance;
+    double robot_human_distance_cutoff_factor;
   } socialTeb;  //!< Parameters related to socially awareness planning (but not optimizations constraints)
 
   
@@ -302,7 +305,8 @@ public:
     optim.weight_dynamic_obstacle_inflation = 0.1;
     optim.weight_viapoint = 1;
     optim.weight_prefer_rotdir = 50;
-    
+    optim.weight_social_proxemics = 1;
+
     optim.weight_adapt_factor = 2.0;
     
     // Homotopy Class Planner
@@ -343,7 +347,8 @@ public:
 
     // Social TEB
     socialTeb.use_social_teb = false;
-
+    socialTeb.min_robot_human_distance = 0.7;
+    socialTeb.robot_human_distance_cutoff_factor = 2;
 
   }
   
