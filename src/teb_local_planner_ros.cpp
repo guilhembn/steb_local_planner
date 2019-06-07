@@ -88,6 +88,8 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
   {	
     // create Node Handle with name of plugin (as used in move_base for loading)
     ros::NodeHandle nh("~/" + name);
+
+    ros::NodeHandle gnh("/");
 	        
     // get parameters of TebConfig via the nodehandle and override the default config
     cfg_.loadRosParamFromNodeHandle(nh);       
@@ -104,7 +106,7 @@ void TebLocalPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costm
     // create the planner instance
     if (cfg_.socialTeb.use_social_teb){
       ROS_INFO("Social constraints enabled.");
-      humansProvider_ = std::shared_ptr<HumansProvider>(new HumansProvider(nh));
+      humansProvider_ = std::shared_ptr<HumansProvider>(new HumansProvider(gnh, nh));
       planner_ = PlannerInterfacePtr(new SocialTebOptimalPlanner(
           cfg_, &obstacles_, robot_model, visualization_, &via_points_, &humans_));
     }else {

@@ -5,29 +5,51 @@
 #include "teb_local_planner/humans_provider.h"
 #include <uwds_msgs/GetScene.h>
 
-teb_local_planner::HumansProvider::HumansProvider(ros::NodeHandle& nh){
-  getuwdsSceneService_ = nh.serviceClient<uwds_msgs::GetScene>(UWDS_SERVICE_NAME);
+teb_local_planner::HumansProvider::HumansProvider(ros::NodeHandle& nh, ros::NodeHandle& pnh){
+  ctx_ = boost::make_shared<uwds::UnderworldsProxy>(boost::make_shared<ros::NodeHandle>(nh),
+                                                   boost::make_shared<ros::NodeHandle>(pnh), "steb_local_planner", uwds::READER);
+  if (ctx_->worlds()[HUMANS_WORLD].connect(bind(&HumansProvider::onChanges, this, _1, _2, _3))){
+    ROS_INFO("Connected to uwds");
+  }
+}
+
+void teb_local_planner::HumansProvider::onChanges(string world_name, Header header, Invalidations invalidations){
+  humans_mutex_.lock();
+  for (const auto& id: invalidations.node_ids_updated){
+    if (ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].name.find("Human") != std::string::npos){//TODO: Check class instead
+      auto hPose = ctx_->worlds()[HUMANS_WORLD].scene().getWorldPose(id);
+      if (humans_.count(id) == 0){
+        teb_local_planner::Human h(hPose.position.x, hPose.position.y, humanRadius);
+        h.setCentroidVelocity(ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].velocity,
+                              hPose.orientation);
+        humans_[id] = h;
+      }else{
+        humans_[id].x() = hPose.position.x;
+        humans_[id].y() = hPose.position.y;
+        humans_[id].setCentroidVelocity(ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].velocity,
+                              hPose.orientation);
+      }
+    }
+  }
+
+  for (const auto& id: invalidations.node_ids_deleted){
+    if (ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].name.find("Human") != std::string::npos){ // TODO: Check class instead
+      if (humans_.count(id) != 0){
+        humans_.erase(id);
+      }
+    }
+  }
+  humans_mutex_.unlock();
 }
 
 
 bool teb_local_planner::HumansProvider::getLastHumans(
     teb_local_planner::HumanContainer &humans) {
-  uwds_msgs::GetScene scene;
-  scene.request.ctxt.client.type = scene.request.ctxt.client.READER;
-  scene.request.ctxt.client.name = "steb_local_planner";
-  scene.request.ctxt.world = HUMANS_WORLD;
-  if (!getuwdsSceneService_.call(scene)){
-    return false;
-  }
-  humans.clear();
-  for (auto &node: scene.response.nodes){
-    if (node.name.find("Human") != std::string::npos){
-      HumanPtr h = boost::make_shared<Human>(node.position.pose.position.x, node.position.pose.position.y,
-                                  humanRadius);
-      h->setCentroidVelocity(node.velocity, node.position.pose.orientation);
-      humans.push_back(h);
+    humans_mutex_.lock();
+    humans.reserve(humans_.size());
+    for (auto const& h: humans_){
+      ROS_INFO("Human added !");
+      humans.push_back(HumanPtr(new Human(h.second)));
     }
-  }
-  return true;
-
+    humans_mutex_.unlock();
 }

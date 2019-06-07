@@ -46,6 +46,7 @@
   <depend>tf2_ros</depend>
   <depend>visualization_msgs</depend>
   <depend>uwds_msgs</depend>
+  <depend>uwds</depend>
 
   <export>
     <nav_core plugin="${prefix}/teb_local_planner_plugin.xml"/>
