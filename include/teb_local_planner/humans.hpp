@@ -23,8 +23,8 @@ public:
     * @param position 2d position that defines the current obstacle position
     * @param radius radius of the obstacle
    */
-  Human(const Eigen::Ref<const Eigen::Vector2d> &position, double radius)
-      : CircularObstacle(position, radius){}
+  Human(const Eigen::Ref<const Eigen::Vector2d> &position, double orientation, double radius)
+      : CircularObstacle(position, radius), orientation_(orientation){}
 
   /**
     * @brief Construct CircularObstacle using x- and y-center-coordinates and radius
@@ -32,8 +32,16 @@ public:
     * @param y y-coordinate
     * @param radius radius of the obstacle
    */
-  Human(double x, double y, double radius)
-      : CircularObstacle(x, y, radius) {}
+  Human(double x, double y, double theta, double radius)
+      : CircularObstacle(x, y, radius), orientation_(theta) {}
+
+  Human(const Human& human): CircularObstacle(human.x(), human.y(), human.radius()), orientation_(human.orientation()){}
+
+  double& orientation() {return orientation_;} //!< Return the current orientation of the human
+  const double& orientation() const {return orientation_;} //!< Return the current orientation of the human
+
+protected:
+  double orientation_;
 
 
 
