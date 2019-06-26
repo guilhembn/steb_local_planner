@@ -54,7 +54,6 @@ SocialTebOptimalPlanner::SocialTebOptimalPlanner(
     const TebConfig &cfg, ObstContainer *obstacles,
     RobotFootprintModelPtr robot_model, TebVisualizationPtr visual,
     const ViaPointContainer *via_points, HumanContainer *humans): TebOptimalPlanner(cfg, obstacles, robot_model, visual, via_points), humans_(humans) {
-    initialize(cfg, obstacles, robot_model, visual, via_points, humans);
 }
 
 void SocialTebOptimalPlanner::initialize(
@@ -62,15 +61,13 @@ void SocialTebOptimalPlanner::initialize(
     teb_local_planner::ObstContainer *obstacles,
     teb_local_planner::RobotFootprintModelPtr robot_model,
     teb_local_planner::TebVisualizationPtr visual,
-    const teb_local_planner::ViaPointContainer *via_points,
-    teb_local_planner::HumanContainer *humans) {
+    const teb_local_planner::ViaPointContainer *via_points) {
 
     // init optimizer (set solver and block ordering settings)
     optimizer_ = initOptimizerWithHumans();
 
     cfg_ = &cfg;
     obstacles_ = obstacles;
-    humans_ = humans;
     robot_model_ = robot_model;
     via_points_ = via_points;
     cost_ = HUGE_VAL;
@@ -111,6 +108,7 @@ void SocialTebOptimalPlanner::registerG2OTypesWithHumans()
   factory->registerType("EDGE_DYNAMIC_OBSTACLE", new g2o::HyperGraphElementCreator<EdgeDynamicObstacle>);
   factory->registerType("EDGE_VIA_POINT", new g2o::HyperGraphElementCreator<EdgeViaPoint>);
   factory->registerType("EDGE_PREFER_ROTDIR", new g2o::HyperGraphElementCreator<EdgePreferRotDir>);
+  factory->registerType("EDGE_PROXEMICS", new g2o::HyperGraphElementCreator<EdgeProxemics>);
 }
 
 boost::shared_ptr<g2o::SparseOptimizer> SocialTebOptimalPlanner::initOptimizerWithHumans(){
@@ -209,6 +207,28 @@ void SocialTebOptimalPlanner::AddEdgesProxemics(){
       optimizer_->addEdge(dist_bandpt_prox);
     }
   }
+}
+
+void SocialTebOptimalPlanner::visualize()
+{
+  if (!visualization_)
+    return;
+
+  //ROS_INFO("Publishing social visualization");
+
+  visualization_->publishLocalPlanAndPoses(teb_);
+
+  if (teb_.sizePoses() > 0)
+    visualization_->publishRobotFootprintModel(teb_.Pose(0), *robot_model_);
+
+  if (cfg_->trajectory.publish_feedback)
+    visualization_->publishFeedbackMessage(*this, *obstacles_);
+
+  if (cfg_->socialTeb.use_social_teb){
+    visualization_->publishHumans(*this, *humans_);
+  }
+
+
 }
 
 } // namespace teb_local_planner

@@ -103,9 +103,11 @@ public:
     * @param via_points Container storing via-points (optional)
     */
   void initialize(const TebConfig& cfg, ObstContainer* obstacles = NULL, RobotFootprintModelPtr robot_model = boost::make_shared<PointRobotFootprint>(),
-                  TebVisualizationPtr visual = TebVisualizationPtr(), const ViaPointContainer* via_points = NULL, HumanContainer* humans=NULL);
+                  TebVisualizationPtr visual = TebVisualizationPtr(), const ViaPointContainer* via_points = NULL) override;
 
   boost::shared_ptr<g2o::SparseOptimizer> initOptimizerWithHumans();
+
+  void visualize() override;
 
 protected:
 

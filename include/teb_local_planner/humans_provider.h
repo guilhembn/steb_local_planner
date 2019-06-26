@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #define UWDS_SERVICE_NAME "/uwds/get_scene"
-#define HUMANS_WORLD "robot/env"
+#define HUMANS_WORLD "robot/merged"
 
 namespace teb_local_planner {
 

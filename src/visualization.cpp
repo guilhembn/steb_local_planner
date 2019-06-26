@@ -65,7 +65,8 @@ void TebVisualization::initialize(ros::NodeHandle& nh, const TebConfig& cfg)
   local_plan_pub_ = nh.advertise<nav_msgs::Path>("local_plan",1);
   teb_poses_pub_ = nh.advertise<geometry_msgs::PoseArray>("teb_poses", 100);
   teb_marker_pub_ = nh.advertise<visualization_msgs::Marker>("teb_markers", 1000);
-  feedback_pub_ = nh.advertise<teb_local_planner::FeedbackMsg>("teb_feedback", 10);  
+  feedback_pub_ = nh.advertise<teb_local_planner::FeedbackMsg>("teb_feedback", 10);
+  humans_pub_ = nh.advertise<visualization_msgs::Marker>("teb_humans", 10);
   
   initialized_ = true; 
 }
@@ -452,6 +453,34 @@ void TebVisualization::publishFeedbackMessage(const TebOptimalPlanner& teb_plann
   }
   
   feedback_pub_.publish(msg);
+}
+
+void TebVisualization::publishHumans(const SocialTebOptimalPlanner& social_teb_planner, const HumanContainer& humans){
+
+  int idx = 0;
+  for (auto human: humans)
+  {
+    visualization_msgs::Marker marker;
+    marker.type = visualization_msgs::Marker::CYLINDER;
+    marker.pose.position.x = human->x();
+    marker.pose.position.y = human->y();
+    marker.pose.position.z = 0.6;
+    marker.scale.x = 0.3;
+    marker.scale.y = 0.3;
+    marker.scale.z = 1.8;
+    marker.color.a = 1.0;
+    marker.color.r = 0.0;
+    marker.color.g = 1.0;
+    marker.color.b = 1.0;
+
+    marker.header.frame_id = cfg_->map_frame;
+    marker.header.stamp = ros::Time::now();
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.ns = "human";
+    marker.id = idx;
+    marker.lifetime = ros::Duration(2.0);
+    humans_pub_.publish(marker);
+  }
 }
 
 bool TebVisualization::printErrorWhenNotInitialized() const

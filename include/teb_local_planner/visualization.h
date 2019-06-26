@@ -45,6 +45,7 @@
 #include <teb_local_planner/teb_config.h>
 #include <teb_local_planner/timed_elastic_band.h>
 #include <teb_local_planner/robot_footprint_model.h>
+#include <teb_local_planner/humans.hpp>
 
 // ros stuff
 #include <ros/publisher.h>
@@ -69,7 +70,8 @@
 namespace teb_local_planner
 {
   
-class TebOptimalPlanner; //!< Forward Declaration 
+class TebOptimalPlanner; //!< Forward Declaration
+class SocialTebOptimalPlanner;
 
   
 /**
@@ -218,6 +220,8 @@ public:
    * @param obstacles Container of obstacles
    */
   void publishFeedbackMessage(const TebOptimalPlanner& teb_planner, const ObstContainer& obstacles);
+
+  void publishHumans(const SocialTebOptimalPlanner& social_teb_planner, const HumanContainer& humans);
   
   //@}
   
@@ -234,6 +238,7 @@ protected:
   ros::Publisher teb_poses_pub_; //!< Publisher for the trajectory pose sequence
   ros::Publisher teb_marker_pub_; //!< Publisher for visualization markers
   ros::Publisher feedback_pub_; //!< Publisher for the feedback message for analysis and debug purposes
+  ros::Publisher humans_pub_;
   
   const TebConfig* cfg_; //!< Config class that stores and manages all related parameters
   

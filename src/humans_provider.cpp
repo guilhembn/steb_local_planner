@@ -17,7 +17,7 @@ teb_local_planner::HumansProvider::HumansProvider(ros::NodeHandle& nh, ros::Node
 void teb_local_planner::HumansProvider::onChanges(string world_name, Header header, Invalidations invalidations){
   humans_mutex_.lock();
   for (const auto& id: invalidations.node_ids_updated){
-    if (ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].name.find("Human") != std::string::npos){//TODO: Check class instead
+    if (ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].name.find("human") != std::string::npos){//TODO: Check class instead
       auto hPose = ctx_->worlds()[HUMANS_WORLD].scene().getWorldPose(id);
       if (humans_.count(id) == 0){
         teb_local_planner::Human h(hPose.position.x, hPose.position.y, tf2::getYaw(hPose.orientation), humanRadius);
@@ -34,10 +34,8 @@ void teb_local_planner::HumansProvider::onChanges(string world_name, Header head
   }
 
   for (const auto& id: invalidations.node_ids_deleted){
-    if (ctx_->worlds()[HUMANS_WORLD].scene().nodes()[id].name.find("human") != std::string::npos){ // TODO: Check class instead
-      if (humans_.count(id) != 0){
-        humans_.erase(id);
-      }
+    if (humans_.count(id) > 0){
+      humans_.erase(id);
     }
   }
   humans_mutex_.unlock();
